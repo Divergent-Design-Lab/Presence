@@ -5,7 +5,10 @@ const userId = window.localStorage.getItem("userId");
 
 function create(tweetData) {
   console.log(tweetData);
-  return client(`tweets/new`, { body: tweetData });
+  return client(`tweets/new`, {
+    body: tweetData,
+    formData: true,
+  });
 }
 
 function search({ query = "" }) {

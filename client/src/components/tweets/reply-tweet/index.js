@@ -10,6 +10,7 @@ import useModal from "../../../hooks/useModal";
 import Toast from "../../toast";
 import { useCreateReply } from "../../../utils/tweets";
 import { useAuth } from "../../../context/authContext";
+import { CreateTweetForm } from "../new-tweet/index";
 
 const TweetWrapper = styled.div`
   display: flex;
@@ -106,52 +107,52 @@ const MediaPolls = styled.div`
 //   }
 // `;
 
-function CreateTweetReplyForm({
-  loggedInUserId,
-  tweet,
-  onSubmit,
-  placeholder = "Add another quack",
-}) {
-  const [value, setValue] = useState("");
+// function CreateTweetReplyForm({
+//   loggedInUserId,
+//   tweet,
+//   onSubmit,
+//   placeholder = "Add another quack",
+// }) {
+//   const [value, setValue] = useState("");
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
+//   const handleFormSubmit = (e) => {
+//     e.preventDefault();
 
-    const tweetData = {
-      author: loggedInUserId,
-      content: value,
-      parent: tweet._id,
-    };
+//     const tweetData = {
+//       author: loggedInUserId,
+//       content: value,
+//       parent: tweet._id,
+//     };
 
-    onSubmit(tweetData);
-    setValue("");
-  };
+//     onSubmit(tweetData);
+//     setValue("");
+//   };
 
-  return (
-    <TweetForm onSubmit={handleFormSubmit}>
-      <TweetInputWrapper>
-        <UserImg src={profile_src} alt="User Image" />
-        <TweetInput
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-          }}
-          type="text"
-          placeholder={placeholder}
-        />
-      </TweetInputWrapper>
-      <MediaInputWrapper>
-        <MediaInnerWrapper>
-          <input hidden type="file" />
-          <MediaImg>{Icons.img}</MediaImg>
-        </MediaInnerWrapper>
-        <GenericBtn type="submit" disabled={!value}>
-          Tweet
-        </GenericBtn>
-      </MediaInputWrapper>
-    </TweetForm>
-  );
-}
+//   return (
+//     <TweetForm onSubmit={handleFormSubmit}>
+//       <TweetInputWrapper>
+//         <UserImg src={profile_src} alt="User Image" />
+//         <TweetInput
+//           value={value}
+//           onChange={(e) => {
+//             setValue(e.target.value);
+//           }}
+//           type="text"
+//           placeholder={placeholder}
+//         />
+//       </TweetInputWrapper>
+//       <MediaInputWrapper>
+//         <MediaInnerWrapper>
+//           <input hidden type="file" />
+//           <MediaImg>{Icons.img}</MediaImg>
+//         </MediaInnerWrapper>
+//         <GenericBtn type="submit" disabled={!value}>
+//           Tweet
+//         </GenericBtn>
+//       </MediaInputWrapper>
+//     </TweetForm>
+//   );
+// }
 
 const NewTweetReply = ({ tweet, closeNewReply, showSuccessToast }) => {
   // const { state } = useContext(AuthContext)
@@ -187,10 +188,13 @@ const NewTweetReply = ({ tweet, closeNewReply, showSuccessToast }) => {
 
   return (
     <TweetWrapper>
-      <CreateTweetReplyForm
+      <CreateTweetForm
         loggedInUserId={loggedInUserId}
-        tweet={tweet}
         onSubmit={createReply}
+        tweetStatus={replyStatus}
+        loggedInUserName={loggedInUserName}
+        parentTweetId={tweet._id}
+        placeholder="Add another Quack"
       />
     </TweetWrapper>
   );

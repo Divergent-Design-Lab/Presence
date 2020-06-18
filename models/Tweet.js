@@ -6,9 +6,13 @@ const TweetSchema = new Schema({
   content: {
     type: String,
     default: "",
-    required: true,
+    required: false,
   },
   author: { type: Schema.Types.ObjectId, ref: "user", required: true },
+  media: {
+    type: Array,
+    required: false,
+  },
   replies: {
     type: Number,
     default: 0,

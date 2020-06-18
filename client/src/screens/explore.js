@@ -33,7 +33,7 @@ const SearchOuter = styled.div`
   background: white;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
   border-bottom: 1px solid ${Colors.border};
 `;
 

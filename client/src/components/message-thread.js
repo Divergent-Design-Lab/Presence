@@ -356,10 +356,10 @@ const BubbleWrapper = styled.div`
 const Bubble = styled.div`
   background: ${Colors.primary};
   padding: 10px 15px;
-  border-top-left-radius: 99px;
-  border-top-right-radius: 99px;
-  border-bottom-left-radius: ${({ right }) => (right ? `99px` : `0px`)};
-  border-bottom-right-radius: ${({ right }) => (right ? `0px` : `99px`)};
+  border-top-left-radius: 1.25rem;
+  border-top-right-radius: 1.25rem;
+  border-bottom-left-radius: ${({ right }) => (right ? `1.25rem` : `0px`)};
+  border-bottom-right-radius: ${({ right }) => (right ? `0px` : `1.25rem`)};
 `;
 
 const BubbleContent = styled.p`

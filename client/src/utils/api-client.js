@@ -21,8 +21,17 @@ async function client(endpoint, { body, ...customConfig } = {}) {
     },
   };
   if (body) {
-    config.body = JSON.stringify(body);
-    config.headers["content-type"] = "application/json";
+    // config.body = JSON.stringify();
+    if (customConfig.formData) {
+      config.body = body;
+    } else {
+      config.body = JSON.stringify(body);
+      config.headers["content-type"] = "application/json";
+    }
+
+    // if (!customConfig.noHeader) {
+    //   config.headers["content-type"] = "application/json";
+    // }
   }
 
   return window.fetch(`/api/${endpoint}`, config).then(async (r) => {

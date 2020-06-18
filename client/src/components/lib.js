@@ -55,7 +55,7 @@ const SidebarFooter = styled.p`
 
 const HomeTitleWrapper = styled.div`
   background: white;
-  z-index: 10;
+  z-index: 20;
   position: sticky;
   top: 0;
   display: flex;

@@ -11,8 +11,6 @@ const messages = require("./routes/api/messages");
 
 const app = express();
 
-console.log(process.env.MONGO_URI);
-
 // Bodyparser middleware
 app.use(
   bodyParser.urlencoded({

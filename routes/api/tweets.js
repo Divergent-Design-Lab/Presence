@@ -6,34 +6,127 @@ const passport = require("passport");
 // const { v4: uuidv4 } = require("uuid");
 // Load input validation
 const validateTweetInput = require("../../validation/tweet");
-
+const multer = require("multer");
+const AWS = require("aws-sdk");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 // Load User model
 const Tweet = require("../../models/Tweet");
 const User = require("../../models/User");
+const tweet = require("../../validation/tweet");
 
-router.post("/new", async (req, res) => {
+let s3bucket = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+async function uploadFile(file, fileKey) {
+  return new Promise(async function (resolve, reject) {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: fileKey + file.originalname,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ACL: "public-read",
+    };
+
+    await s3bucket.upload(params, function (s3Err, data) {
+      if (s3Err) {
+        reject(s3Err);
+      }
+      console.log(`File uploaded successfully at ${data}`);
+      resolve(data);
+    });
+  });
+}
+
+async function deleteFile(fileKey) {
+  return new Promise(async function (resolve, reject) {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: fileKey,
+    };
+
+    await s3bucket.deleteObject(params, function (s3Err, data) {
+      if (s3Err) {
+        reject(s3Err);
+      }
+      console.log(`File uploaded successfully at ${data}`);
+      resolve(data);
+    });
+  });
+}
+
+router.post("/new", upload.array("images"), async (req, res) => {
   // console.log(req.body);
-  console.log(req.body);
-  try {
-    const newTweet = new Tweet({
-      parent: req.body.parent ? `${req.body.parent}` : null,
-      content: `${req.body.content}`,
-      author: `${req.body.author}`,
+  // if (req.files != undefined) {
+  //   console.log(files);
+  // }
+  // if (req.files.length > 0) {
+  //   console.log(req.files);
+  // }
+  // console.log(req.body);
+  // console.log(req.files);
+  // console.log(req.body);
+  let uploadFilePromises = [];
+  let tweetMediaUrls = [];
+
+  if (req.files != undefined) {
+    const files = req.files;
+    const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
+    const tweetMediaKey = `${req.body.authorUserName}/`;
+
+    files.map((file) => {
+      uploadFilePromises.push(uploadFile(file, tweetMediaKey));
     });
 
-    // console.log(newTweet);
+    Promise.all(uploadFilePromises).then(
+      async (values) => {
+        tweetMediaUrls = values;
+        console.log(tweetMediaUrls);
+        const newTweet = new Tweet({
+          parent: req.body.parent ? `${req.body.parent}` : null,
+          content: req.body.content ? req.body.content : null,
+          author: `${req.body.authorId}`,
+          media: tweetMediaUrls,
+        });
+        const saveResponse = await newTweet.save();
 
-    const saveResponse = await newTweet.save();
+        if (newTweet.parent != null) {
+          const tweet = await Tweet.findOne({ _id: newTweet.parent });
+          tweet.replies++;
+          await tweet.save();
+        }
 
-    if (newTweet.parent != null) {
-      const tweet = await Tweet.findOne({ _id: newTweet.parent });
-      tweet.replies++;
-      await tweet.save();
+        res.json(saveResponse);
+      },
+      (reason) => {
+        console.log(reason);
+      }
+    );
+  } else {
+    try {
+      const newTweet = new Tweet({
+        parent: req.body.parent ? `${req.body.parent}` : null,
+        content: `${req.body.content}`,
+        author: `${req.body.authorId}`,
+      });
+
+      // console.log(newTweet);
+
+      const saveResponse = await newTweet.save();
+
+      if (newTweet.parent != null) {
+        const tweet = await Tweet.findOne({ _id: newTweet.parent });
+        tweet.replies++;
+        await tweet.save();
+      }
+
+      res.json(saveResponse);
+    } catch (err) {
+      res.json(err);
     }
-
-    res.json(saveResponse);
-  } catch (err) {
-    res.json(err);
   }
 });
 
@@ -51,9 +144,24 @@ router.delete("/:id", async (req, res) => {
       await parentTweet.save();
     }
 
-    const result = await tweetForDelete.remove();
+    let deleteFilePromises = [];
 
-    res.json(result);
+    if (tweetForDelete.media.length > 0) {
+      tweetForDelete.media.map((file) => {
+        deleteFilePromises.push(deleteFile(file.key));
+      });
+    }
+
+    Promise.all(deleteFilePromises).then(
+      async (values) => {
+        const result = await tweetForDelete.remove();
+        res.json(result);
+      },
+      (reason) => {
+        console.log(reason);
+      }
+    );
+
     // tweetForDelete.remove().then(tweet =>)
   } catch (err) {
     console.log(err);

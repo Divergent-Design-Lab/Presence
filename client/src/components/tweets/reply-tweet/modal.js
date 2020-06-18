@@ -194,7 +194,16 @@ const NewTweetReplyModal = ({ closeNewReply, tweet, showSuccessToast }) => {
 
               <UserName>@{tweet.author.userName}</UserName>
             </NameWrapper>
-            <TweetDescription>{tweet.content}</TweetDescription>
+            {tweet.content ? (
+              <TweetDescription>{tweet.content}</TweetDescription>
+            ) : null}
+            {tweet.media.length > 0 ? (
+              <TweetDescription>
+                {tweet.media.map((mediaObj) => {
+                  return mediaObj.Location;
+                })}
+              </TweetDescription>
+            ) : null}
           </TweetContent>
         </TweetWrapper>
         <NewTweetReply

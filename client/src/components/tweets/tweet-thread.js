@@ -71,6 +71,112 @@ const TweetContent = styled.div`
   margin: 0 5px;
   padding-bottom: 10px;
 `;
+const MediaContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+`;
+
+const MediaContentOverflow = styled.div`
+  position: relative;
+`;
+
+const MediaContentInner = styled.div`
+  padding-bottom: 56.25%;
+  width: 100%;
+`;
+
+const MediaImgContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-basis: auto;
+  width: 100%;
+  height: 100%;
+`;
+
+const MediaContentPositioner = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+`;
+
+const MediaContentImgLink = styled.a`
+  /* width: 100%;
+  height: 100%; */
+  display: flex;
+`;
+
+const MediaContentImgWrapper = styled.div`
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  flex-grow: 1;
+  position: relative;
+  &:last-child {
+    margin-right: 0;
+  }
+`;
+
+const MediaContentImgInner = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+`;
+
+const MediaContentImgAdjust = styled.div`
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+`;
+
+const MediaContentImgOverflow = styled.div`
+  display: flex;
+  flex-basis: auto;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+`;
+
+const MediaContentBG = styled.div`
+  background-image: url(${({ url }) => url});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: 14px;
+`;
+
+const MediaContentImg = styled.img`
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+`;
 
 const NameWrapper = styled.div`
   display: flex;
@@ -590,7 +696,39 @@ function TweetThread({ tweet }) {
           </NameWrapper>
         </TweetHeader>
         <TweetContent>
-          <LargeDesc>{tweet.content}</LargeDesc>
+          {tweet.content ? <LargeDesc>{tweet.content}</LargeDesc> : null}
+          {tweet.media.length > 0 ? (
+            <MediaContentWrapper>
+              <MediaContentOverflow>
+                <MediaContentInner />
+                <MediaContentPositioner>
+                  <MediaImgContainer>
+                    <MediaContentImgInner>
+                      <MediaContentImgAdjust>
+                        <MediaContentImgOverflow>
+                          {tweet.media.map((mediaObj) => (
+                            <MediaContentImgWrapper>
+                              <MediaContentImgLink
+                                href={mediaObj.Location}
+                                target="_blank"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <MediaContentBG url={mediaObj.Location} />
+                                <MediaContentImg
+                                  src={mediaObj.Location}
+                                  alt="image upload"
+                                />
+                              </MediaContentImgLink>
+                            </MediaContentImgWrapper>
+                          ))}
+                        </MediaContentImgOverflow>
+                      </MediaContentImgAdjust>
+                    </MediaContentImgInner>
+                  </MediaImgContainer>
+                </MediaContentPositioner>
+              </MediaContentOverflow>
+            </MediaContentWrapper>
+          ) : null}
           <TweetDate>
             <Moment format="h:mm A MMMM D, YYYY">{tweet.createdAt}</Moment>
           </TweetDate>
