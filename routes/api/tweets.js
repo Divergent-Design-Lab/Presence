@@ -52,7 +52,7 @@ async function deleteFile(fileKey) {
       if (s3Err) {
         reject(s3Err);
       }
-      console.log(`File uploaded successfully at ${data}`);
+      console.log(`File deleted successfully at ${data.Location}`);
       resolve(data);
     });
   });
@@ -72,10 +72,16 @@ router.post("/new", upload.array("images"), async (req, res) => {
   let uploadFilePromises = [];
   let tweetMediaUrls = [];
 
+  const newTweet = new Tweet({
+    parent: req.body.parent ? req.body.parent : null,
+    content: req.body.content ? req.body.content : null,
+    author: req.body.authorId,
+  });
+
   if (req.files != undefined) {
     const files = req.files;
     const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
-    const tweetMediaKey = `${req.body.authorUserName}/`;
+    const tweetMediaKey = `${req.body.authorUserName}/${newTweet._id}/`;
 
     files.map((file) => {
       uploadFilePromises.push(uploadFile(file, tweetMediaKey));
@@ -85,12 +91,7 @@ router.post("/new", upload.array("images"), async (req, res) => {
       async (values) => {
         tweetMediaUrls = values;
         console.log(tweetMediaUrls);
-        const newTweet = new Tweet({
-          parent: req.body.parent ? `${req.body.parent}` : null,
-          content: req.body.content ? req.body.content : null,
-          author: `${req.body.authorId}`,
-          media: tweetMediaUrls,
-        });
+        newTweet.media = tweetMediaUrls;
         const saveResponse = await newTweet.save();
 
         if (newTweet.parent != null) {
@@ -107,14 +108,7 @@ router.post("/new", upload.array("images"), async (req, res) => {
     );
   } else {
     try {
-      const newTweet = new Tweet({
-        parent: req.body.parent ? `${req.body.parent}` : null,
-        content: `${req.body.content}`,
-        author: `${req.body.authorId}`,
-      });
-
-      // console.log(newTweet);
-
+      newTweet.media = [];
       const saveResponse = await newTweet.save();
 
       if (newTweet.parent != null) {

@@ -10,7 +10,6 @@ const NewTweetModalWrapper = styled.div`
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  min-height: 290px;
   max-width: 80vw;
 
   max-height: 90vh;
@@ -122,6 +121,7 @@ const NewTweetModal = ({ closeNewTweet, showSuccessToast }) => {
       </NewTweetModalHeader>
       <NewTweetContent>
         <NewTweet
+          inputSize="lg"
           isModal
           showSuccessToast={showSuccessToast}
           closeNewTweet={closeNewTweet}

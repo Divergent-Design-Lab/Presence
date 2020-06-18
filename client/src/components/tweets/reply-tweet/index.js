@@ -13,8 +13,8 @@ import { useAuth } from "../../../context/authContext";
 import { CreateTweetForm } from "../new-tweet/index";
 
 const TweetWrapper = styled.div`
+  width: 100%;
   display: flex;
-  flex-direction: column;
   padding: 20px 15px;
 `;
 
@@ -31,6 +31,8 @@ const TweetInputWrapper = styled.div`
 
 const UserImg = styled.img`
   border-radius: 50%;
+  width: 49px;
+  height: 49px;
 `;
 
 const TweetInput = styled.input`
@@ -169,13 +171,6 @@ const NewTweetReply = ({ tweet, closeNewReply, showSuccessToast }) => {
       if (closeNewReply) {
         closeNewReply();
       }
-
-      console.log(loggedInUserName);
-      showSuccessToast(
-        "Your Tweet was sent",
-        `/${loggedInUserName}/status/${replyData._id}`
-      );
-
       // if (showSuccessToast) {
       //   console.log(messageData);
       //   showSuccessToast(messageData.conversationId);
@@ -188,7 +183,9 @@ const NewTweetReply = ({ tweet, closeNewReply, showSuccessToast }) => {
 
   return (
     <TweetWrapper>
+      <UserImg src={profile_src} alt="User Image" />
       <CreateTweetForm
+        inputSize="lg"
         loggedInUserId={loggedInUserId}
         onSubmit={createReply}
         tweetStatus={replyStatus}

@@ -174,6 +174,11 @@ const TweetDescription = styled.p`
   color: ${Colors.title};
 `;
 
+const StyledExternalLink = styled.a`
+  color: ${Colors.primary};
+  text-decoration: underline;
+`;
+
 const NewTweetReplyModal = ({ closeNewReply, tweet, showSuccessToast }) => {
   // console.log(showSuccessToast);
   return (
@@ -191,7 +196,6 @@ const NewTweetReplyModal = ({ closeNewReply, tweet, showSuccessToast }) => {
           <TweetContent>
             <NameWrapper>
               <DisplayName>{tweet.author.displayName}</DisplayName>
-
               <UserName>@{tweet.author.userName}</UserName>
             </NameWrapper>
             {tweet.content ? (
@@ -199,9 +203,11 @@ const NewTweetReplyModal = ({ closeNewReply, tweet, showSuccessToast }) => {
             ) : null}
             {tweet.media.length > 0 ? (
               <TweetDescription>
-                {tweet.media.map((mediaObj) => {
-                  return mediaObj.Location;
-                })}
+                {tweet.media.map((mediaObj) => (
+                  <StyledExternalLink href={mediaObj.Location} target="_blank">
+                    [image]
+                  </StyledExternalLink>
+                ))}
               </TweetDescription>
             ) : null}
           </TweetContent>

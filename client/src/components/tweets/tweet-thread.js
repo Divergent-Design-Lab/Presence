@@ -106,8 +106,8 @@ const MediaContentPositioner = styled.div`
 `;
 
 const MediaContentImgLink = styled.a`
-  /* width: 100%;
-  height: 100%; */
+  width: 100%;
+  height: 100%;
   display: flex;
 `;
 
@@ -118,9 +118,9 @@ const MediaContentImgWrapper = styled.div`
   margin-right: 10px;
   flex-grow: 1;
   position: relative;
-  &:last-child {
+  /* &:last-child {
     margin-right: 0;
-  }
+  } */
 `;
 
 const MediaContentImgInner = styled.div`

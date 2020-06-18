@@ -165,9 +165,9 @@ const MediaContentImgWrapper = styled.div`
   margin-right: 10px;
   flex-grow: 1;
   position: relative;
-  &:last-child {
+  /* &:last-child {
     margin-right: 0;
-  }
+  } */
 `;
 
 const MediaContentImgInner = styled.div`
@@ -227,6 +227,7 @@ const MediaContentImg = styled.img`
 
 const TweetDescription = styled.p`
   color: ${Colors.title};
+  word-break: break-all;
 `;
 
 const TweetActions = styled.div`
@@ -301,9 +302,8 @@ const ShowThread = styled.p`
 `;
 
 const ModalWrapper = styled.div`
-  border-radius: 5px;
   background: white;
-
+  border-radius: 5px;
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px,
     rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
 `;
@@ -328,6 +328,7 @@ const ModalItem = styled.li`
   align-items: center;
   justify-content: space-between;
   padding: 15px;
+  border-radius: 5px;
   &:hover {
     background: rgb(245, 248, 250);
   }
@@ -511,6 +512,7 @@ function TweetRow({ tweet }) {
                   </TweetActionItem>
                 </StyledMenuButton>
                 <MenuPopover
+                  style={{ zIndex: "15" }}
                   position={(targetRect, popoverRect) => {
                     function getTopPosition(targetRect, popoverRect) {
                       const { directionUp } = getCollisions(

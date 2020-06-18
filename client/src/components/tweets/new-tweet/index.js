@@ -10,11 +10,14 @@ import { useCreateTweet } from "../../../utils/tweets";
 import useModal from "../../../hooks/useModal";
 import Toast from "../../toast";
 import { useAuth } from "../../../context/authContext";
+import TextareaAutosize from "react-textarea-autosize";
 
 const TweetWrapper = styled.div`
   width: 100%;
   display: flex;
-  padding: 20px 15px;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding: 10px 15px;
 `;
 
 const TweetForm = styled.form`
@@ -24,6 +27,7 @@ const TweetForm = styled.form`
   flex-direction: column;
   justify-content: space-between;
   transition: opacity 0.5s ease;
+
   opacity: ${({ isUploading }) => (isUploading ? `.33` : `1`)};
 `;
 
@@ -34,8 +38,8 @@ const TweetInputWrapper = styled.div`
 const MediaContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
-  margin-bottom: 0;
+
+  margin-bottom: 20px;
 `;
 
 const MediaContentOverflow = styled.div`
@@ -72,9 +76,9 @@ const MediaContentImgWrapper = styled.div`
   margin-right: 10px;
   flex-grow: 1;
   position: relative;
-  &:last-child {
+  /* &:last-child {
     margin-right: 0;
-  }
+  } */
 `;
 
 const MediaImgDelete = styled.div`
@@ -164,16 +168,22 @@ const UserImg = styled.img`
   height: 49px;
 `;
 
-const TweetInput = styled.input`
+const TweetInputArea = styled(TextareaAutosize)`
   width: 100%;
   font-size: 19px;
   border: 0;
   outline: 0;
   padding: 10px;
+  height: 100%;
+  font-family: inherit;
+  resize: none;
+  /* line-height: 1.3125; */
+
+  max-height: 38.0625em;
+  min-height: ${({ inputSize }) => (inputSize === "lg" ? `7.875em` : `53px`)};
 `;
 
 const MediaInputWrapper = styled.div`
-  padding-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -248,6 +258,8 @@ export function CreateTweetForm({
   onSubmit,
   tweetStatus,
   parentTweetId,
+  showSuccessToast,
+  inputSize,
   placeholder = "What's happening?",
 }) {
   const [value, setValue] = useState("");
@@ -309,7 +321,7 @@ export function CreateTweetForm({
   };
 
   const handleRemovePreview = (previewUrl) => {
-    setSelectedPreviews((old) => old.filter((item) => item !== previewUrl));
+    setSelectedPreviews((old) => old.filter((item) => item != previewUrl));
   };
 
   const handleFileSelect = (e) => {
@@ -325,7 +337,8 @@ export function CreateTweetForm({
   return (
     <TweetForm onSubmit={handleFormSubmit} isUploading={uploadLoading}>
       <TweetInputWrapper>
-        <TweetInput
+        <TweetInputArea
+          inputSize={inputSize}
           value={value}
           onChange={(e) => {
             setValue(e.target.value);
@@ -384,7 +397,13 @@ export function CreateTweetForm({
   );
 }
 
-const NewTweet = ({ parent, isModal, closeNewTweet, showSuccessToast }) => {
+const NewTweet = ({
+  parent,
+  isModal,
+  closeNewTweet,
+  showSuccessToast,
+  inputSize,
+}) => {
   // const { state } = useContext(AuthContext);
   // const { isLoading, isError, error, run, reset } = useAsync();
   const { user } = useAuth();
@@ -443,6 +462,7 @@ const NewTweet = ({ parent, isModal, closeNewTweet, showSuccessToast }) => {
       <TweetWrapper>
         <UserImg src={profile_src} alt="User Image" />
         <CreateTweetForm
+          inputSize={inputSize}
           loggedInUserId={loggedInUserId}
           onSubmit={createTweet}
           tweetStatus={tweetStatus}
